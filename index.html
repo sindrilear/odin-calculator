@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+</head>
+<body>
+    <div class="container">
+        <div class="calccontainer">
+            <p>sssss</p>
+        </div>
+    </div>
+</body>
+
+<script>
+
+const add = function(x, y) {
+    return x + y;
+}
+
+const subtract = function(x, y) {
+	return x - y;
+};
+
+const multiply = function(x, y) {
+    return x * y;
+}
+
+const divide = function(x, y) {
+    return x / y;
+}
+
+const operate = function(x, string, y) {
+    if (string === "+") {
+        return add(x, y);
+    } else if (string === "-") {
+        return subtract(x, y);
+    } else if (string === "*") {
+        return multiply(x, y);
+    } else {
+        return divide(x, y);
+    }
+}
+
+let n1 = 5;
+let operator = "+";
+let n2 = 5;
+
+console.log(operate(n1, operator, n2))
+
+
+</script>
+</html>

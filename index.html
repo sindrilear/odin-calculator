@@ -14,8 +14,8 @@
             </div>
             <div class="calculatorbuttonrow">
                 <button type="button" class="operator AC">AC</button>
-                <button type="button" class="operator plusminus">+/-</button>
-                <button type="button" class="operator modulus">%</button>
+                <button type="button" class="operator plusminus" style="font-size: 30px;">←</button>
+                <button type="button" class="operator modulus">+/-</button>
                 <button type="button" class="operator">/</button>
             </div>
             <div class="calculatorbuttonrow">
@@ -77,32 +77,84 @@ let clickedDot = false;
 let operator = "";
 let previousOperator = "";
 let result = 0;
+let keyPressed = "";
 
+window.addEventListener("keydown", function(evt) {
+    // If user presses on keyboard rather than with mouse click
+    keyPressed = evt.keyCode;
+    console.log(keyPressed)
+    if (keyPressed === 8) {
+        deleteLast();
+    } else if (keyPressed === 46) {
+        eraseDisplay();
+    } else if (keyPressed >= 49 && keyPressed <= 57) {
+        // Convert number pressed on keyboard to number and run operate function
+        displayOnCalculator(String.fromCharCode(keyPressed));
+    } else if (keyPressed >= 96 && keyPressed <= 105) {
+        // Convert number p pressed on numpad and run operate function
+        displayOnCalculator(String.fromCharCode(keyPressed - 48));
+        // Convert operator pressed on numpad to character
+    } else if ((keyPressed >= 106 && keyPressed <= 111) || keyPressed === 13) {
+        let keyOperator;
+        switch (keyPressed) {
+            case 13:
+                keyOperator = "=";
+                break;
+            case 106:
+                keyOperator = "*";
+                break;
+            case 107:
+                keyOperator = "+";
+                break;
+            case 108:
+                keyOperator = "-";
+                break;
+            case 109: 
+                keyOperator = "-";
+                break;
+            case 110:
+                keyOperator = ".";
+                break;
+            case 111: 
+                keyOperator = "/";
+                break;
+        }
+        operate(keyOperator);
+    }
+});
 
 numberButtons.forEach(button => {
   button.addEventListener('click', function() {
-    const calcNumber = this.textContent;
-    let clickedNumber = calcNumber;
-
-    <!-- If user has clicked on an operator, calculate n2 -->
-    if (operatorClicked === false) {
-        displayNumber = addDisplay(displayNumber, clickedNumber);
-    } else if (operatorClicked === true) {
-        displayNumber2 = addDisplay(displayNumber2, clickedNumber);
-    }
-    console.log(displayNumber);
-    console.log(displayNumber2);
+    // When the user clicks on a number, display it on calculator
+    displayOnCalculator(this.textContent);
   })
 });
 
 operatorButtons.forEach(button => {
-    button.addEventListener('click', function() {
-        <!-- operatorClick value is the one user clicked on -->
-        const operatorClick = this.textContent;
+    button.addEventListener('click', function () {
+        // When the user clicks on an operator, run the operation
+        operate(this.textContent);
+    })
+});
+
+function displayOnCalculator(string) {
+    let clickedNumber = string;
+    // If user has clicked on an operator, calculate n2 
+    if (operatorClicked === false) {
+        // Display the numbers pressed so far on calculator
+        displayNumber = addDisplay(displayNumber, clickedNumber);
+    } else if (operatorClicked === true) {
+        displayNumber2 = addDisplay(displayNumber2, clickedNumber);
+    }
+  };
+
+function operate(string) {
+        // Operator clicked / pressed is passed into the function
+        const operatorClick = string;
         if (operatorClick === "AC") {
             eraseDisplay();
         } else if (operatorClick === "+" || operatorClick === "-" || operatorClick === "/" || operatorClick === "*") {
-            <!-- If user has clicked on an operator, and clicks on an operator again, calculate first -->
+            // If user has clicked on an operator, and clicks on an operator again, calculate first
             if (operatorClicked === true) {
                 if (displayNumber != "" && displayNumber2 != "")
                     calculate(displayNumber, operator, displayNumber2)
@@ -124,11 +176,12 @@ operatorButtons.forEach(button => {
                 }
                 displayText.textContent = displayNumber;
             }
-        } else if (operatorClick === "%") {
-            calculate (displayNumber, "/", 100);
+        } else if (operatorClick === "←") {
+            deleteLast();
         }    
-    })
-})
+    }
+    
+
 
 const calculate = function(n1, operator, n2) {
     if (operator === "+") {
@@ -150,6 +203,7 @@ const calculate = function(n1, operator, n2) {
 }
 
 const checkNumber = function(number, maxLength) {
+    // If number is too large, convert to bigInt exponential
     const bigIntStr = number.toString();
     if (bigIntStr.length > maxLength) {
         return parseFloat(number).toExponential(maxLength);
@@ -157,7 +211,7 @@ const checkNumber = function(number, maxLength) {
     return number;
 }
 
-<!-- Displays number on calculator as string -->
+// Displays number on calculator as string
 const addDisplay = function(number, addNumber) {
     if (number.length === 10) {
         return number;
@@ -179,6 +233,17 @@ const eraseDisplay = function() {
     clickedDot = false;
     displayText.textContent = "0";
 };
+
+const deleteLast = function() {
+    if (displayText.textContent.length-1 === 0) {
+        displayText.textContent = "0";
+        displayNumber = "";
+    } else {
+        displayNumber = displayNumber.substring(0, displayNumber.length-1);
+        displayText.textContent = displayText.textContent.substring(0, displayText.textContent.length-1);
+    }
+    console.log(displayText.textContent);
+}
 
 </script>
 </html>

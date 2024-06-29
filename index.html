@@ -60,6 +60,9 @@ const multiply = function(x, y) {
 }
 
 const divide = function(x, y) {
+    if (y === 0) {
+        return "No can do :)";
+    }
     return x / y;
 }
 
@@ -136,7 +139,9 @@ const calculate = function(n1, operator, n2) {
     }  else {
         result = divide(parseFloat(n1), parseFloat(n2))
     }
+    if (result != "No can do :)") {
     result = checkNumber(result, 10);
+    }
     displayNumber = result.toString();
     displayNumber2 = "";
     operatorClicked = true;

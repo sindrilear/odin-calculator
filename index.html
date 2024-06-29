@@ -10,12 +10,12 @@
     <div class="container">
         <div class="calculatorcontainer">
             <div class="calculatordisplay">
-                <p></p>
+                <p>0</p>
             </div>
             <div class="calculatorbuttonrow">
-                <button type="button" class="operator">AC</button>
-                <button type="button" class="operator">+/-</button>
-                <button type="button" class="operator">%</button>
+                <button type="button" class="operator AC">AC</button>
+                <button type="button" class="operator plusminus">+/-</button>
+                <button type="button" class="operator modulus">%</button>
                 <button type="button" class="operator">/</button>
             </div>
             <div class="calculatorbuttonrow">
@@ -63,24 +63,87 @@ const divide = function(x, y) {
     return x / y;
 }
 
-const operate = function(x, string, y) {
-    if (string === "+") {
-        return add(x, y);
-    } else if (string === "-") {
-        return subtract(x, y);
-    } else if (string === "*") {
-        return multiply(x, y);
-    } else {
-        return divide(x, y);
+const numberButtons = document.querySelectorAll('.number, .number0');
+const operatorButtons = document.querySelectorAll('.operator');
+const displayText = document.querySelector("p");
+
+let displayNumber = "";
+let displayNumber2 = "";
+let operatorClicked = false;
+let operator = "";
+let previousOperator = "";
+let result = 0;
+
+
+numberButtons.forEach(button => {
+  button.addEventListener('click', function() {
+    const calcNumber = this.textContent;
+    let clickedNumber = calcNumber;
+
+    <!-- If user has clicked on an operator, calculate n2 -->
+    if (operatorClicked === false) {
+        displayNumber = addDisplay(displayNumber, clickedNumber);
+    } else if (operatorClicked === true) {
+        displayNumber2 = addDisplay(displayNumber2, clickedNumber);
     }
+    console.log(displayNumber);
+    console.log(displayNumber2);
+  })
+});
+
+operatorButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        <!-- operatorClick value is the one user clicked on -->
+        const operatorClick = this.textContent;
+        if (operatorClick === "AC") {
+            eraseDisplay();
+        } else if (operatorClick === "+" || operatorClick === "-" || operatorClick === "/" || operatorClick === "*") {
+            if (operatorClicked === true) {
+                if (displayNumber != "" && displayNumber2 != "")
+                    calculate(displayNumber, operator, displayNumber2)
+            }
+            operatorClicked = true;
+            operator = operatorClick;
+        } else if (operatorClick === "=") {
+            if (displayNumber != "" && displayNumber2 != "") {
+                calculate(displayNumber, operator, displayNumber2);
+            }
+        }
+    })
+})
+
+const calculate = function(n1, operator, n2) {
+    if (operator === "+") {
+        result = add(parseInt(n1), parseInt(n2))
+    } else if (operator === "-") {
+        result = subtract(parseInt(n1), parseInt(n2))
+    } else if (operator === "*") {
+        result = multiply(parseInt(n1), parseInt(n2))
+    }  else {
+        result = divide(parseInt(n1), parseInt(n2))
+    }
+    displayNumber = result;
+    displayNumber2 = "";
+    operatorClicked = true;
+    displayText.textContent = result;
 }
 
-let n1 = 5;
-let operator = "+";
-let n2 = 5;
+<!-- Displays number on calculator as string -->
+const addDisplay = function(number, addNumber) {
+    if (number.length === 16) {
+        return number;
+    }
+    number = number + addNumber;
+    displayText.textContent = number;
+    return number;
+};
 
-console.log(operate(n1, operator, n2))
-
+const eraseDisplay = function() {
+    displayNumber = "";
+    displayNumber2 = "";
+    operatorClicked = false;
+    displayText.textContent = "0";
+};
 
 </script>
 </html>

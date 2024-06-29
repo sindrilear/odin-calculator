@@ -59,11 +59,11 @@ button {
     background-color: #ff7400;
 }
 
-.number, .number0 {
+.number, .number0, .numberdot {
     background-color: #DFBCB2;
 }
 
-.number:hover, .number0:hover {
+.number:hover, .number0:hover, .numberdot:hover {
     background-color: #DA7297;
 }
 

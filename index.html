@@ -38,7 +38,7 @@
             </div>
             <div class="calculatorbuttonrow">
                 <button type="button" class="number0">0</button>
-                <button type="button" class="number">.</button>
+                <button type="button" class="numberdot">.</button>
                 <button type="button" class="operator">=</button>
             </div>
         </div>
@@ -63,13 +63,14 @@ const divide = function(x, y) {
     return x / y;
 }
 
-const numberButtons = document.querySelectorAll('.number, .number0');
+const numberButtons = document.querySelectorAll('.number, .number0, .numberdot');
 const operatorButtons = document.querySelectorAll('.operator');
 const displayText = document.querySelector("p");
 
 let displayNumber = "";
 let displayNumber2 = "";
 let operatorClicked = false;
+let clickedDot = false;
 let operator = "";
 let previousOperator = "";
 let result = 0;
@@ -101,37 +102,64 @@ operatorButtons.forEach(button => {
             if (operatorClicked === true) {
                 if (displayNumber != "" && displayNumber2 != "")
                     calculate(displayNumber, operator, displayNumber2)
+                clickedDot = false;
             }
             operatorClicked = true;
             operator = operatorClick;
         } else if (operatorClick === "=") {
             if (displayNumber != "" && displayNumber2 != "") {
                 calculate(displayNumber, operator, displayNumber2);
+                clickedDot = false;
             }
-        }
+        } else if (operatorClick === "+/-") {
+            if (displayNumber !== "0") {
+                if (displayNumber.startsWith("-")) {
+                    displayNumber = displayNumber.substring(1);
+                } else {
+                    displayNumber = `-${displayNumber}`;
+                }
+                displayText.textContent = displayNumber;
+            }
+        } else if (operatorClick === "%") {
+            calculate (displayNumber, "/", 100);
+        }    
     })
 })
 
 const calculate = function(n1, operator, n2) {
     if (operator === "+") {
-        result = add(parseInt(n1), parseInt(n2))
+        result = add(parseFloat(n1), parseFloat(n2))
     } else if (operator === "-") {
-        result = subtract(parseInt(n1), parseInt(n2))
+        result = subtract(parseFloat(n1), parseFloat(n2))
     } else if (operator === "*") {
-        result = multiply(parseInt(n1), parseInt(n2))
+        result = multiply(parseFloat(n1), parseFloat(n2))
     }  else {
-        result = divide(parseInt(n1), parseInt(n2))
+        result = divide(parseFloat(n1), parseFloat(n2))
     }
-    displayNumber = result;
+    result = checkNumber(result, 10);
+    displayNumber = result.toString();
     displayNumber2 = "";
     operatorClicked = true;
     displayText.textContent = result;
 }
 
+const checkNumber = function(number, maxLength) {
+    const bigIntStr = number.toString();
+    if (bigIntStr.length > maxLength) {
+        return parseFloat(number).toExponential(maxLength);
+    }
+    return number;
+}
+
 <!-- Displays number on calculator as string -->
 const addDisplay = function(number, addNumber) {
-    if (number.length === 16) {
+    if (number.length === 15) {
         return number;
+    } else if (addNumber === "." && clickedDot === true) {
+        return number;
+    }
+    if (addNumber === ".") {
+        clickedDot = true;
     }
     number = number + addNumber;
     displayText.textContent = number;
@@ -142,6 +170,7 @@ const eraseDisplay = function() {
     displayNumber = "";
     displayNumber2 = "";
     operatorClicked = false;
+    clickedDot = false;
     displayText.textContent = "0";
 };
 
